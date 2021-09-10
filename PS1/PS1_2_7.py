@@ -35,4 +35,3 @@ result = prob.solve()
 
 print('Optimal value is ' + str(result))
 [print(str(val.value)) for val in x]
-

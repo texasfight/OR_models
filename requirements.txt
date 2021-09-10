@@ -1,2 +1,4 @@
 cvxpy
 cvxopt
+numpy
+pandas

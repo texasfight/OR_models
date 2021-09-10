@@ -1,10 +1,11 @@
 import cvxpy as cp
 import numpy as np
+import pandas as pd
 
 # Set decision variables
-A = cp.Variable(10)
-B = cp.Variable(10)
-C = cp.Variable(10)
+A = cp.Variable(10, name="A")
+B = cp.Variable(10, name="B")
+C = cp.Variable(10, name="C")
 
 # non-negative constraint
 non_neg = [A >= 0,
@@ -23,13 +24,12 @@ struct_matrix = np.matrix([[0, 1/12, 1/18],
                            [0, 1/13, 1/8],
                            [1/9, 0, 1/15]])
 
-prod = struct_matrix @ np.matrix([A, B, C]).T
-
-structs = [cp.sum(prod, axis=x) == 1 for x in range(10)]
-
 limit = [cp.sum(A) <= 40, cp.sum(B) <= 40, cp.sum(C) <= 40]
 
-constraints = limit + structs + non_neg
+constraints = limit + non_neg
+
+for i in range(10):
+    constraints.append(A[i] * struct_matrix[i,0] + B[i] * struct_matrix[i,1] + C[i] * struct_matrix[i,2] == 1)
 
 objective = cp.Minimize(cp.sum(A) + cp.sum(B) + cp.sum(C))
 
@@ -37,7 +37,10 @@ prob = cp.Problem(objective, constraints)
 
 result = prob.solve()
 
-print('Optimal value is ' + str(result))
-print('Total hours for A: ' + str(A.value))
-print('Total hours for B: ' + str(B.value))
-print('Total hours for C: ' + str(C.value))
+
+pd.set_option('display.max_columns', None)
+df = pd.DataFrame([np.round(A.value), np.round(B.value), np.round(C.value)], index=["A","B","C"], columns=[f"Task {x+1}" for x in range(10)])
+df["Total"] = df.sum(axis=1)
+print(df)
+df.to_csv("./output/2_12.csv")
+print(np.round(result))
