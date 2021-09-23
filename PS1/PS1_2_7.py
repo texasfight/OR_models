@@ -2,12 +2,12 @@ import cvxpy as cp
 
 # Create decision variable
 
-x1 = cp.Variable(1, integer=True)
-x2 = cp.Variable(1, integer=True)
-x3 = cp.Variable(1, integer=True)
-x4 = cp.Variable(1, integer=True)
-x5 = cp.Variable(1, integer=True)
-x6 = cp.Variable(1, integer=True)
+x1 = cp.Variable(integer=True)
+x2 = cp.Variable(integer=True)
+x3 = cp.Variable(integer=True)
+x4 = cp.Variable(integer=True)
+x5 = cp.Variable(integer=True)
+x6 = cp.Variable(integer=True)
 
 x = [x1, x2, x3, x4, x5, x6]
 
@@ -33,5 +33,5 @@ prob = cp.Problem(objective, constraints)
 
 result = prob.solve()
 
-print('Optimal value is ' + str(result))
-[print(str(val.value)) for val in x]
+print('Optimal amount of drivers throughout the day is ' + str(result))
+[print(f"Shift {i} has {val.value} drivers start") for i, val in enumerate(x)]
