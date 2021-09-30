@@ -2,3 +2,4 @@ cvxpy
 cvxopt
 numpy
 pandas
+pulp
